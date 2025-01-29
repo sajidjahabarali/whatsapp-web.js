@@ -746,24 +746,6 @@ class Client extends EventEmitter {
                 }).bind(module);
             }
         });
-
-        /**
-         * Emitted when the client has initialized and is ready to receive messages.
-         * @event Client#ready
-         */
-        this.emit(Events.READY);
-        this.authStrategy.afterAuthReady();
-
-        // Disconnect when navigating away when in PAIRING state (detect logout)
-        this.pupPage.on('framenavigated', async () => {
-            const appState = await this.getState();
-            if (!appState || appState === WAState.PAIRING) {
-                await this.authStrategy.disconnect();
-                this.emit(Events.DISCONNECTED, 'NAVIGATION');
-                await this.destroy();
-                await this.authStrategy.logout();
-            }
-        });
     }
 
     async initWebVersionCache() {
